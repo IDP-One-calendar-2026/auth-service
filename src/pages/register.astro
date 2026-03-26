@@ -1,0 +1,110 @@
+---
+import AuthLayout from '../layouts/AuthLayout.astro';
+
+const callbackUrl = Astro.url.searchParams.get('callbackUrl') || '';
+---
+
+<AuthLayout title="Create Account">
+  <h1>Create Account</h1>
+  <p class="subtitle">Enter your details to get started</p>
+  <div id="error" class="error"></div>
+  <form id="registerForm" action="javascript:void(0);">
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" placeholder="Your name" required autocomplete="name" />
+    </div>
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" placeholder="you@example.com" required autocomplete="email" />
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="Create a password" required minlength="8" autocomplete="new-password" />
+    </div>
+    <div class="form-group">
+      <label for="confirmPassword">Confirm Password</label>
+      <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required minlength="8" autocomplete="new-password" />
+    </div>
+    <button type="submit" class="btn" id="submitBtn">Create Account</button>
+  </form>
+  <div class="link">
+    Already have an account? <a href={`/login${callbackUrl ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : ''}`}>Sign in</a>
+  </div>
+
+  <script is:inline define:vars={{ callbackUrl }}>
+    const form = document.getElementById('registerForm');
+    const errorEl = document.getElementById('error');
+    const submitBtn = document.getElementById('submitBtn');
+    const targetUrl = callbackUrl || '/';
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      errorEl.style.display = 'none';
+
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+
+      if (password !== confirmPassword) {
+        errorEl.textContent = 'Passwords do not match';
+        errorEl.style.display = 'block';
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="spinner"></span>Creating account...';
+
+      try {
+        const res = await fetch('/api/auth/sign-up/email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          redirect: 'follow',
+          body: JSON.stringify({ name, email, password }),
+        });
+
+        let data;
+        try {
+          data = await res.json();
+        } catch (_) {
+          data = {};
+        }
+
+        if (!res.ok) {
+          throw new Error(data.message || data.error?.message || 'Could not create account');
+        }
+
+        // Fetch JWT token for the authenticated session
+        let accessToken = null;
+        try {
+          const tokenRes = await fetch('/api/auth/token', {
+            method: 'GET',
+            credentials: 'include',
+          });
+          if (tokenRes.ok) {
+            const tokenData = await tokenRes.json();
+            accessToken = tokenData.token || null;
+          }
+        } catch (_) {
+          // Token fetch failed, continue without it
+        }
+
+        // Redirect to callback with token
+        const redirectUrl = new URL(targetUrl, window.location.origin);
+        if (accessToken) {
+          redirectUrl.searchParams.set('access_token', accessToken);
+        }
+        window.location.href = redirectUrl.toString();
+      } catch (err) {
+        errorEl.textContent = err.message;
+        errorEl.style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Create Account';
+      }
+
+      return false;
+    });
+  </script>
+</AuthLayout>
