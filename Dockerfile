@@ -12,8 +12,18 @@ FROM base AS prod-deps
 RUN pnpm install --prod --frozen-lockfile
 
 FROM base AS build
+ARG BUILD_DATABASE_URL
+ARG BUILD_AUTH_URL
+ARG BUILD_UI_URL
+ARG BUILD_API_URL
+
 RUN pnpm install --frozen-lockfile
-RUN pnpm run build
+RUN DATABASE_URL="$BUILD_DATABASE_URL" \
+	BETTER_AUTH_URL="$BUILD_AUTH_URL" \
+	VITE_UI_URL="$BUILD_UI_URL" \
+	VITE_API_URL="$BUILD_API_URL" \
+	BETTER_AUTH_TRUSTED_ORIGINS="$BUILD_TRUSTED_ORIGINS" \
+	pnpm run build
 
 FROM base
 COPY --from=prod-deps /app/node_modules /app/node_modules

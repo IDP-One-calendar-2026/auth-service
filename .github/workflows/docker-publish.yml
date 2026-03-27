@@ -59,6 +59,12 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
+          build-args: |
+            BUILD_AUTH_SECRET=${{ secrets.BUILD_AUTH_SECRET || vars.BUILD_AUTH_SECRET }}
+            BUILD_DATABASE_URL=${{ secrets.BUILD_DATABASE_URL || vars.BUILD_DATABASE_URL }}
+            BUILD_AUTH_URL=${{ secrets.BUILD_AUTH_URL || vars.BUILD_AUTH_URL }}
+            BUILD_UI_URL=${{ secrets.BUILD_UI_URL || vars.BUILD_UI_URL }}
+            BUILD_API_URL=${{ secrets.BUILD_API_URL || vars.BUILD_API_URL }}
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
