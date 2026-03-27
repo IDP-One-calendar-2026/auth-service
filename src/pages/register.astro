@@ -28,7 +28,7 @@ const callbackUrl = Astro.url.searchParams.get('callbackUrl') || '';
     <button type="submit" class="btn" id="submitBtn">Create Account</button>
   </form>
   <div class="link">
-    Already have an account? <a href={`/login${callbackUrl ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : ''}`}>Sign in</a>
+    Already have an account? <a href={`login${callbackUrl ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : ''}`}>Sign in</a>
   </div>
 
   <script is:inline define:vars={{ callbackUrl }}>
@@ -57,7 +57,7 @@ const callbackUrl = Astro.url.searchParams.get('callbackUrl') || '';
       submitBtn.innerHTML = '<span class="spinner"></span>Creating account...';
 
       try {
-        const res = await fetch('/api/auth/sign-up/email', {
+        const res = await fetch('api/auth/sign-up/email', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
@@ -79,7 +79,7 @@ const callbackUrl = Astro.url.searchParams.get('callbackUrl') || '';
         // Fetch JWT token for the authenticated session
         let accessToken = null;
         try {
-          const tokenRes = await fetch('/api/auth/token', {
+          const tokenRes = await fetch('api/auth/token', {
             method: 'GET',
             credentials: 'include',
           });

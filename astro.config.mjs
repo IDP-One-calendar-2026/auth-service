@@ -4,6 +4,7 @@ import node from '@astrojs/node';
 
 // https://astro.build/config
 export default defineConfig({
+  base: '/auth',
   output: 'server',
   adapter: node({
     mode: 'standalone',
