@@ -4,6 +4,10 @@ import { jwt } from 'better-auth/plugins';
 import { db } from '../db';
 import * as schema from '../db/schema';
 
+const extraTrustedOrigins = import.meta.env.BETTER_AUTH_TRUSTED_ORIGINS
+  ? import.meta.env.BETTER_AUTH_TRUSTED_ORIGINS.split(',').map((o: string) => o.trim())
+  : [];
+
 export const auth = betterAuth({
   baseURL: import.meta.env.BETTER_AUTH_URL,
   database: drizzleAdapter(db, {
@@ -12,7 +16,11 @@ export const auth = betterAuth({
       ...schema,
     },
   }),
-  trustedOrigins: [import.meta.env.VITE_UI_URL, import.meta.env.VITE_API_URL],
+  trustedOrigins: [
+    import.meta.env.VITE_UI_URL,
+    import.meta.env.VITE_API_URL,
+    ...extraTrustedOrigins,
+  ],
   emailAndPassword: {
     enabled: true,
   },
