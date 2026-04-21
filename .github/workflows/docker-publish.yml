@@ -65,6 +65,7 @@ jobs:
             BUILD_AUTH_URL=${{ secrets.BUILD_AUTH_URL || vars.BUILD_AUTH_URL }}
             BUILD_UI_URL=${{ secrets.BUILD_UI_URL || vars.BUILD_UI_URL }}
             BUILD_API_URL=${{ secrets.BUILD_API_URL || vars.BUILD_API_URL }}
+            BETTER_AUTH_TRUSTED_ORIGINS=${{ secrets.BETTER_AUTH_TRUSTED_ORIGINS || vars.BETTER_AUTH_TRUSTED_ORIGINS }}
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

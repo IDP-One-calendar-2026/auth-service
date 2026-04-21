@@ -1,4 +1,6 @@
 ---
-// Redirect to login page by default
-return Astro.redirect('login');
 ---
+<script>
+    const path = window.location.href.split('/').slice(3).filter(Boolean).join('/');
+    window.location.href = `/${path}/login`;
+</script>
