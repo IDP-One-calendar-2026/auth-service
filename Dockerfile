@@ -9,7 +9,7 @@ COPY . /app
 WORKDIR /app
 
 FROM base AS prod-deps
-RUN pnpm install --prod --frozen-lockfile
+RUN pnpm install --frozen-lockfile
 
 FROM base AS build
 ARG BUILD_DATABASE_URL
