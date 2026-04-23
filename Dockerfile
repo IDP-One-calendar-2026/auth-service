@@ -29,4 +29,5 @@ FROM base
 COPY --from=prod-deps /app/node_modules /app/node_modules
 COPY --from=build /app/dist /app/dist
 EXPOSE 3001
-CMD ["pnpm", "preview"]
+EXPOSE 4983
+CMD ["sh", "-c", "pnpm db:studio --host 0.0.0.0 --port 4983 & pnpm preview"]
