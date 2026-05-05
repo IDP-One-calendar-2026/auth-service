@@ -9,6 +9,7 @@ const extraTrustedOrigins = import.meta.env.BETTER_AUTH_TRUSTED_ORIGINS
   : [];
 
 export const auth = betterAuth({
+  secret: import.meta.env.BETTER_AUTH_SECRET,
   baseURL: import.meta.env.BETTER_AUTH_URL,
   database: drizzleAdapter(db, {
     provider: 'sqlite',

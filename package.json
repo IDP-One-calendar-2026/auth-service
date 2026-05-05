@@ -19,6 +19,7 @@
     "better-auth": "^1.5.3",
     "dotenv": "^16.6.1",
     "drizzle-orm": "^0.41.0",
+    "jose": "^6.2.3",
     "zod": "^3.25.76"
   },
   "devDependencies": {
